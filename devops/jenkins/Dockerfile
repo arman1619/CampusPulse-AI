@@ -46,7 +46,9 @@ USER jenkins
 
 RUN jenkins-plugin-cli --plugins \
     workflow-aggregator \
+    timestamper \
     git \
     credentials-binding \
     junit \
     ws-cleanup
+
