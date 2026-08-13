@@ -165,7 +165,7 @@ services:
       frontend:
         condition: service_started
     healthcheck:
-      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://localhost:8080/gateway-health"]
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:8080/gateway-health"]
       interval: 10s
       timeout: 4s
       retries: 10
@@ -177,3 +177,4 @@ networks:
 
 volumes:
   postgres_data:
+

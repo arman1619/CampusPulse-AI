@@ -39,3 +39,6 @@ crash.log
 # Local artifacts
 *.log
 *.zip
+
+# Assessment evidence screenshots
+EVIDENCE/
