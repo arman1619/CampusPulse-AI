@@ -27,7 +27,7 @@ pipeline {
     }
     stage('Install CI dependencies') {
       steps {
-        sh 'python -m pip install --upgrade pip'
+        sh 'python -m pip --version'
         sh 'python -m pip install ruff pytest pytest-cov bandit pip-audit'
         sh 'for s in auth-service feedback-service ai-service notification-service; do python -m pip install -r services/$s/requirements.txt; done'
         sh 'python -m pip install -r services/assistant-service/requirements-ci.txt'
@@ -142,4 +142,5 @@ pipeline {
     }
   }
 }
+
 
