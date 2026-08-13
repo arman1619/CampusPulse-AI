@@ -83,8 +83,8 @@ pipeline {
     stage('Local compose smoke test') {
       steps {
         sh 'ASSISTANT_BACKEND=template ASSISTANT_REQUIRE_LLM=false docker compose up -d'
-        sh 'python scripts/wait_for_stack.py --url http://localhost:8080 --timeout 360'
-        sh 'python tests/smoke/smoke.py --base-url http://localhost:8080'
+        sh 'python scripts/wait_for_stack.py --url http://host.docker.internal:8080 --timeout 360'
+        sh 'python tests/smoke/smoke.py --base-url http://host.docker.internal:8080'
       }
       post { always { sh 'docker compose down -v || true' } }
     }
@@ -142,3 +142,4 @@ pipeline {
     }
   }
 }
+
