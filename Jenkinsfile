@@ -82,11 +82,11 @@ pipeline {
     }
     stage('Local compose smoke test') {
       steps {
-        sh 'ASSISTANT_BACKEND=template ASSISTANT_REQUIRE_LLM=false docker compose up -d'
+        sh 'ASSISTANT_BACKEND=template ASSISTANT_REQUIRE_LLM=false docker compose --env-file .env.example up -d'
         sh 'python scripts/wait_for_stack.py --url http://host.docker.internal:8080 --timeout 360'
         sh 'python tests/smoke/smoke.py --base-url http://host.docker.internal:8080'
       }
-      post { always { sh 'docker compose down -v || true' } }
+      post { always { sh 'docker compose --env-file .env.example down -v || true' } }
     }
     stage('Hosted Llama API smoke (opt-in)') {
       when { expression { return params.RUN_HOSTED_LLM_SMOKE } }
