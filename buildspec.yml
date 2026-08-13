@@ -1,0 +1,35 @@
+version: 0.2
+
+env:
+  shell: bash
+
+phases:
+  install:
+    runtime-versions:
+      python: 3.12
+      nodejs: 20
+    commands:
+      - python --version
+      - node --version
+      - npm --version
+      - pip install --upgrade pip
+      - pip install ruff pytest pytest-cov bandit pip-audit
+  pre_build:
+    commands:
+      - echo "AWS CodeBuild independent verification path"
+      - for s in auth-service feedback-service ai-service notification-service; do pip install -r services/$s/requirements.txt; done
+      - pip install -r services/assistant-service/requirements-ci.txt
+      - cd frontend && npm install --no-audit --no-fund && cd ..
+  build:
+    commands:
+      - ./scripts/lint-all.sh
+      - ./scripts/test-all.sh
+      - cd services/ai-service && PYTHONPATH=. python evaluation/evaluate.py && cd ../..
+      - cd services/assistant-service && PYTHONPATH=. python evaluation/evaluate.py && cd ../..
+      - cd frontend && npm run build && cd ..
+      - python tests/integration/test_contracts.py
+      - python scripts/release_check.py
+      - docker compose config -q
+  post_build:
+    commands:
+      - echo "CodeBuild verification completed at $(date -u +%FT%TZ)"

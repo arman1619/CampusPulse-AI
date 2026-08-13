@@ -1,0 +1,16 @@
+flowchart LR
+ U[Student / Staff / Admin] --> UI[React Frontend]
+ UI --> G[Nginx Gateway]
+ G --> A[Auth]
+ G --> F[Feedback]
+ G --> T[AI Triage]
+ G --> N[Notifications]
+ G --> L[Hosted Llama Assistant]
+ F --> T
+ F --> N
+ A --> DB1[(Auth DB)]
+ F --> DB2[(Feedback DB)]
+ N --> DB3[(Notification DB)]
+ L --> DB4[(Assistant DB)]
+ L --> KB[(Campus KB)]
+ L --> M[Hugging Face Inference Providers\nLlama 3.1 8B Instruct]

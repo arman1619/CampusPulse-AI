@@ -1,0 +1,1 @@
+{"name":"campuspulse-ai-workspace","private":true,"scripts":{"test:frontend":"npm --prefix frontend test","lint:frontend":"npm --prefix frontend run lint","build:frontend":"npm --prefix frontend run build"}}

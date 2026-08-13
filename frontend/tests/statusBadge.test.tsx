@@ -1,0 +1,1 @@
+import{render,screen}from'@testing-library/react';import StatusBadge from'../src/components/StatusBadge';test('renders status text',()=>{render(<StatusBadge value="CRITICAL"/>);expect(screen.getByText('CRITICAL')).toBeInTheDocument()});

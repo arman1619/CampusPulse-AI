@@ -1,0 +1,102 @@
+{
+  "evaluation_scope": "deterministic retrieval and guardrail evaluation; no LLM generation scoring",
+  "retrieval_cases": 8,
+  "retrieval_hit_at_3": 1.0,
+  "retrieval_mrr_at_3": 0.9375,
+  "safety_hazard_recall": 1.0,
+  "prompt_injection_block_rate": 1.0,
+  "retrieval_details": [
+    {
+      "query": "How do I submit a campus issue?",
+      "role": "STUDENT",
+      "expected": "KB-001",
+      "top3": [
+        "KB-001",
+        "KB-009",
+        "KB-010"
+      ],
+      "hit": true
+    },
+    {
+      "query": "What statuses can my issue move through?",
+      "role": "STUDENT",
+      "expected": "KB-002",
+      "top3": [
+        "KB-002",
+        "KB-010",
+        "KB-006"
+      ],
+      "hit": true
+    },
+    {
+      "query": "Can AI make the final priority decision?",
+      "role": "STUDENT",
+      "expected": "KB-003",
+      "top3": [
+        "KB-003",
+        "KB-001",
+        "KB-004"
+      ],
+      "hit": true
+    },
+    {
+      "query": "What should I do if there is exposed electrical wiring?",
+      "role": "STUDENT",
+      "expected": "KB-004",
+      "top3": [
+        "KB-004",
+        "KB-001",
+        "KB-010"
+      ],
+      "hit": true
+    },
+    {
+      "query": "How are assistant conversations protected?",
+      "role": "STUDENT",
+      "expected": "KB-005",
+      "top3": [
+        "KB-009",
+        "KB-005",
+        "KB-010"
+      ],
+      "hit": true
+    },
+    {
+      "query": "How can staff override AI classification?",
+      "role": "STAFF",
+      "expected": "KB-007",
+      "top3": [
+        "KB-007",
+        "KB-003",
+        "KB-010"
+      ],
+      "hit": true
+    },
+    {
+      "query": "What analytics can an administrator view?",
+      "role": "ADMIN",
+      "expected": "KB-008",
+      "top3": [
+        "KB-008",
+        "KB-010",
+        "KB-006"
+      ],
+      "hit": true
+    },
+    {
+      "query": "How should I write a useful issue description?",
+      "role": "STUDENT",
+      "expected": "KB-010",
+      "top3": [
+        "KB-010",
+        "KB-001",
+        "KB-009"
+      ],
+      "hit": true
+    }
+  ],
+  "limitations": [
+    "Synthetic evaluation prompts are small and are not evidence of production safety.",
+    "Hosted-model factuality, latency and groundedness require a real Hugging Face inference smoke/manual evaluation with valid access and quota."
+  ]
+}

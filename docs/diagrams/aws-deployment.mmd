@@ -1,0 +1,14 @@
+flowchart LR
+ Git[GitHub/Git] --> J[Jenkins]
+ Git --> CC[CodeCommit mirror]
+ CC --> CB[CodeBuild verification]
+ J --> E[ECR images]
+ E --> Blue[EB Blue]
+ E --> Green[EB Green]
+ Blue & Green --> R[(Private RDS)]
+ SM[Secrets Manager] --> Blue
+ SM --> Green
+ Blue & Green --> CW[CloudWatch]
+ J --> S3[S3 EB versions]
+ S3 --> Blue
+ S3 --> Green

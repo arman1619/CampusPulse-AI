@@ -1,0 +1,3 @@
+# Future Scope
+
+Deliberately non-mandatory extensions include an event broker/outbox pattern for notifications, OpenTelemetry distributed tracing, refresh tokens/MFA/SSO, managed secrets rotation, richer staff assignment rules, attachment/object storage, email/push channels, calibrated empirical NLP models, multilingual support, bias/error dashboards, active learning, Playwright browser E2E, load/performance tests, ECS or Kubernetes orchestration, multi-region disaster recovery and separate production databases per service. These should be justified by operational need rather than added solely for technology count.

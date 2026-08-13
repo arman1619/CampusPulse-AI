@@ -1,0 +1,13 @@
+{
+  "evaluation_scope": "quota-free hosted-API contract parsing and deterministic safety rules; no claim about live Llama predictive accuracy",
+  "safety_hazard_recall": 1.0,
+  "safety_false_positive_rate": 0.0,
+  "hosted_json_schema_parser_pass_rate": 1.0,
+  "local_model_weights": false,
+  "hosted_model": "meta-llama/Llama-3.1-8B-Instruct",
+  "limitations": [
+    "Live hosted-model quality depends on model/provider behavior and requires a token-backed smoke/manual evaluation.",
+    "LLM-reported confidence values are not calibrated probabilities and are used only as human-review signals.",
+    "Safety rules reduce risk but cannot guarantee detection of every real-world emergency phrasing."
+  ]
+}

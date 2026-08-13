@@ -1,0 +1,10 @@
+flowchart TD
+ Q[Authenticated message] --> G{Guardrail}
+ G -->|prompt injection| B[Block]
+ G -->|safety hazard| H[Human emergency guidance]
+ G -->|normal| R[Role-aware TF-IDF retrieval]
+ R --> K[(Versioned KB)]
+ K --> P[Grounded system/user prompt]
+ P --> M[Local Hugging Face model]
+ M --> O[Answer + citations + backend metadata]
+ O --> D[(Assistant conversation DB)]

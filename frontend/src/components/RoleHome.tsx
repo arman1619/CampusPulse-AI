@@ -1,0 +1,1 @@
+import{Navigate}from'react-router-dom';import{useAuth}from'../contexts/AuthContext';export default function RoleHome(){const{user}=useAuth();if(!user)return <Navigate to="/login" replace/>;return <Navigate to={user.role==='ADMIN'?'/admin':user.role==='STAFF'?'/staff':'/student'} replace/>}

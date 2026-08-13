@@ -1,0 +1,37 @@
+{
+  "verification_date": "2026-08-12",
+  "backend_ai_assistant_tests": {"passed": 30, "failed": 0},
+  "service_results": {
+    "auth": {"tests": 3, "coverage_percent": 79},
+    "feedback": {"tests": 5, "coverage_percent": 89},
+    "hosted_llama_triage": {"tests": 10, "coverage_percent": 81},
+    "notification": {"tests": 2, "coverage_percent": 92},
+    "hosted_llama_assistant": {"tests": 10, "coverage_percent": 85}
+  },
+  "triage_control_evaluation": {
+    "safety_hazard_recall": 1.0,
+    "safety_false_positive_rate": 0.0,
+    "hosted_json_schema_parser_pass_rate": 1.0,
+    "local_model_weights": false
+  },
+  "assistant_evaluation": {
+    "retrieval_hit_at_3": 1.0,
+    "retrieval_mrr_at_3": 0.9375,
+    "safety_hazard_recall": 1.0,
+    "prompt_injection_block_rate": 1.0
+  },
+  "live_integration": "pass_with_quota_free_ci_backends",
+  "python_compile": "pass",
+  "yaml_json_parse": "pass",
+  "bash_syntax": "pass",
+  "typescript_tsx_syntax_files": 33,
+  "release_check": "pass",
+  "local_ai_model_weights": false,
+  "not_executed_environment_limits": [
+    "real Hugging Face hosted Llama inference (build sandbox has no usable external network/token verification path)",
+    "frontend dependency-based Vitest/ESLint/Vite build (node_modules absent in sandbox)",
+    "Docker build/Compose runtime (Docker daemon unavailable in sandbox)",
+    "Terraform fmt/validate/plan (Terraform CLI unavailable)",
+    "AWS provisioning/deployment (credentials unavailable)"
+  ]
+}

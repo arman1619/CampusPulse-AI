@@ -1,0 +1,98 @@
+services:
+
+  db-init:
+    image: 183758910735.dkr.ecr.eu-west-2.amazonaws.com/campuspulse-auth:latest
+    env_file:
+      - .env
+    command:
+      - sh
+      - -c
+      - |
+        python -c "
+        import os, psycopg
+        url=os.environ['POSTGRES_ADMIN_URL'].replace('postgresql+psycopg://','postgresql://')
+        conn=psycopg.connect(url, autocommit=True)
+        cur=conn.cursor()
+        for db in ['campuspulse_auth','campuspulse_feedback','campuspulse_notifications','campuspulse_assistant']:
+            cur.execute('SELECT 1 FROM pg_database WHERE datname=%s',(db,))
+            if not cur.fetchone():
+                cur.execute(f'CREATE DATABASE {db}')
+        print('CampusPulse databases ready')
+        "
+    networks: [backend]
+
+  auth-service:
+    image: 183758910735.dkr.ecr.eu-west-2.amazonaws.com/campuspulse-auth:latest
+    env_file:
+      - .env
+    environment:
+      ENVIRONMENT: production
+      SEED_DEMO: "true"
+    depends_on:
+      db-init:
+        condition: service_completed_successfully
+    networks: [backend]
+
+  ai-service:
+    image: 183758910735.dkr.ecr.eu-west-2.amazonaws.com/campuspulse-ai:latest
+    env_file:
+      - .env
+    environment:
+      ENVIRONMENT: production
+    networks: [backend]
+
+  notification-service:
+    image: 183758910735.dkr.ecr.eu-west-2.amazonaws.com/campuspulse-notification:latest
+    env_file:
+      - .env
+    environment:
+      ENVIRONMENT: production
+    depends_on:
+      db-init:
+        condition: service_completed_successfully
+    networks: [backend]
+
+  feedback-service:
+    image: 183758910735.dkr.ecr.eu-west-2.amazonaws.com/campuspulse-feedback:latest
+    env_file:
+      - .env
+    environment:
+      ENVIRONMENT: production
+      AI_SERVICE_URL: http://ai-service:8003
+      NOTIFICATION_SERVICE_URL: http://notification-service:8004
+    depends_on:
+      db-init:
+        condition: service_completed_successfully
+    networks: [backend]
+
+  assistant-service:
+    image: 183758910735.dkr.ecr.eu-west-2.amazonaws.com/campuspulse-assistant:latest
+    env_file:
+      - .env
+    environment:
+      ENVIRONMENT: production
+    depends_on:
+      db-init:
+        condition: service_completed_successfully
+    networks: [backend]
+
+  frontend:
+    image: 183758910735.dkr.ecr.eu-west-2.amazonaws.com/campuspulse-frontend:v2
+    networks: [frontend]
+
+  gateway:
+    image: 183758910735.dkr.ecr.eu-west-2.amazonaws.com/campuspulse-gateway:latest
+    ports:
+      - "8080:8080"
+    depends_on:
+      - auth-service
+      - feedback-service
+      - ai-service
+      - notification-service
+      - assistant-service
+      - frontend
+    networks: [frontend, backend]
+
+networks:
+  frontend:
+  backend:

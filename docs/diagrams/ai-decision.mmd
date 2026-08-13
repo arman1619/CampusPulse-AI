@@ -1,0 +1,13 @@
+flowchart TD
+Input --> TFIDF --> Category
+TFIDF --> Sentiment
+TFIDF --> Priority
+Input --> Safety{Safety rule?}
+Safety -- yes --> Critical[CRITICAL / SAFETY_RULE]
+Safety -- no --> Priority
+Category & Sentiment & Priority --> Confidence{Below 0.75?}
+Confidence -- yes --> Review[Human review]
+Confidence -- no --> Store[Store prediction]
+Critical --> Review
+Review --> Store
+Store --> Override[Authorised human override]

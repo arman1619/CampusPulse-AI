@@ -1,0 +1,6 @@
+flowchart LR
+ Commit --> Jenkins
+ Commit --> CodeCommit --> CodeBuild
+ Jenkins --> Gate[Tests + security gates]
+ CodeBuild --> Verify[Independent AWS verification]
+ Gate --> Docker --> Trivy --> ECR --> InactiveEB --> Smoke --> Swap --> Prod

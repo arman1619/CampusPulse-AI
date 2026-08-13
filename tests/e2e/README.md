@@ -1,0 +1,2 @@
+# Browser E2E extension point
+The assessed core includes API-level live integration and frontend component tests. A browser driver is intentionally not made a mandatory runtime dependency. For a production extension, add Playwright tests for login, student submission, staff override and admin analytics against the gateway URL. The practical demonstration checklist defines the same end-to-end evidence manually.

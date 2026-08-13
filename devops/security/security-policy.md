@@ -1,0 +1,2 @@
+# CI Security Gate Policy
+Ruff/ESLint failures block the pipeline. Bandit high-confidence findings and `pip-audit`/`npm audit` high-or-critical dependency findings block the local CI demonstration. Trivy blocks deployment on unfixed/known `CRITICAL` container findings by default. Teams may temporarily accept a finding only through a documented, time-bounded risk exception; scanners must not be disabled silently. Secrets are supplied through Jenkins/AWS credentials and environment configuration, never committed to the repository or baked into container images.

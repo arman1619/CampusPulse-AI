@@ -1,0 +1,62 @@
+[
+  {
+    "id": "KB-001",
+    "title": "Submitting campus feedback",
+    "audience": ["ALL"],
+    "content": "Use Submit Feedback to enter a clear title, description and building or location. CampusPulse automatically analyses sentiment, category and priority. You do not need to choose the AI labels manually. The issue is stored even if the AI service is temporarily unavailable, and analysis can be retried."
+  },
+  {
+    "id": "KB-002",
+    "title": "Issue status workflow",
+    "audience": ["ALL"],
+    "content": "CampusPulse uses SUBMITTED, ASSIGNED, IN_PROGRESS, RESOLVED, CLOSED and REOPENED statuses. Status changes are validated by backend domain rules and recorded in the audit trail. A student can view the status of their own issue; authorised staff and administrators perform operational status changes."
+  },
+  {
+    "id": "KB-003",
+    "title": "AI classification and human review",
+    "audience": ["ALL"],
+    "content": "The issue-analysis service predicts sentiment, category and priority with confidence values. Low-confidence outputs are marked for human review. Staff can override category or priority with a reason. Original model outputs, final decisions and decision source remain traceable."
+  },
+  {
+    "id": "KB-004",
+    "title": "Safety-critical issues",
+    "audience": ["ALL"],
+    "content": "CampusPulse applies explicit safety rules to wording that may indicate fire, gas leaks, exposed electrical wiring, weapons, violence, structural collapse or serious physical danger. The rule can force CRITICAL priority and records decision_source as SAFETY_RULE. This is a risk-reduction mechanism, not an emergency response service."
+  },
+  {
+    "id": "KB-005",
+    "title": "Student privacy and access",
+    "audience": ["ALL"],
+    "content": "Students are authorised to view their own sensitive feedback records. Server-side role-based access control prevents a student from administering users or accessing another student's protected issue data. Do not place passwords, authentication tokens or unnecessary personal information in feedback or chat messages."
+  },
+  {
+    "id": "KB-006",
+    "title": "Notifications",
+    "audience": ["ALL"],
+    "content": "In-app notifications can be generated for issue submission, assignment, status changes, resolution and AI manual-review requirements. Users can view unread counts, mark individual notifications as read and mark all notifications as read."
+  },
+  {
+    "id": "KB-007",
+    "title": "Staff issue handling",
+    "audience": ["STAFF", "ADMIN"],
+    "content": "Authorised staff can filter relevant issues, inspect the original report and AI evidence, update valid workflow states, add staff comments, assign work where permitted, and override AI category or priority with a documented reason."
+  },
+  {
+    "id": "KB-008",
+    "title": "Administrator capabilities",
+    "audience": ["ADMIN"],
+    "content": "Administrators can access global issue and AI analytics, manage user roles and account activation, inspect audit records, review human overrides and operational statistics, and filter complaints across the platform."
+  },
+  {
+    "id": "KB-009",
+    "title": "Assistant limitations",
+    "audience": ["ALL"],
+    "content": "CampusPulse Assistant is an assistive interface backed by a compact local language model and a bundled knowledge base. It can explain how to use the platform and help users formulate clear issue descriptions, but it does not autonomously submit or modify issues and it must not be treated as authoritative policy, legal, medical or emergency advice."
+  },
+  {
+    "id": "KB-010",
+    "title": "Writing a useful issue report",
+    "audience": ["ALL"],
+    "content": "A useful issue report states what happened, where it happened, when or how often it occurs, the observable impact, and any immediate safety concern. Avoid speculation about people and avoid unnecessary personal data. Staff can act more efficiently when the report is specific and factual."
+  }
+]

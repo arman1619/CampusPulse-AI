@@ -1,0 +1,179 @@
+name: campuspulse-ai
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-campuspulse}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-campuspulse_local_only}
+      POSTGRES_DB: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./scripts/init-databases.sql:/docker-entrypoint-initdb.d/10-init-databases.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-campuspulse} -d postgres"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    networks: [backend]
+
+  auth-service:
+    build:
+      context: ./services/auth-service
+    environment:
+      ENVIRONMENT: ${ENVIRONMENT:-development}
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+      AUTH_DATABASE_URL: ${AUTH_DATABASE_URL}
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_ALGORITHM: ${JWT_ALGORITHM:-HS256}
+      JWT_EXPIRE_MINUTES: ${JWT_EXPIRE_MINUTES:-60}
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:8080}
+      SEED_DEMO: ${SEED_DEMO:-true}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8001/health', timeout=2)"]
+      interval: 10s
+      timeout: 4s
+      retries: 15
+    networks: [backend]
+
+  ai-service:
+    build:
+      context: ./services/ai-service
+    environment:
+      ENVIRONMENT: ${ENVIRONMENT:-development}
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+      HF_TOKEN: ${HF_TOKEN:-}
+      AI_CONFIDENCE_THRESHOLD: ${AI_CONFIDENCE_THRESHOLD:-0.75}
+      AI_MODEL_ID: ${AI_MODEL_ID:-meta-llama/Llama-3.1-8B-Instruct}
+      AI_PROVIDER: ${AI_PROVIDER:-auto}
+      AI_BACKEND: ${AI_BACKEND:-huggingface}
+      AI_REQUIRE_LLM: ${AI_REQUIRE_LLM:-true}
+      AI_API_TIMEOUT_SECONDS: ${AI_API_TIMEOUT_SECONDS:-45}
+      AI_MAX_RETRIES: ${AI_MAX_RETRIES:-2}
+      AI_MAX_TOKENS: ${AI_MAX_TOKENS:-180}
+      AI_TEMPERATURE: ${AI_TEMPERATURE:-0.0}
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8003/health', timeout=2)"]
+      interval: 10s
+      timeout: 4s
+      retries: 15
+    networks: [backend]
+
+  notification-service:
+    build:
+      context: ./services/notification-service
+    environment:
+      ENVIRONMENT: ${ENVIRONMENT:-development}
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+      NOTIFICATION_DATABASE_URL: ${NOTIFICATION_DATABASE_URL}
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_ALGORITHM: ${JWT_ALGORITHM:-HS256}
+      INTERNAL_SERVICE_TOKEN: ${INTERNAL_SERVICE_TOKEN}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8004/health', timeout=2)"]
+      interval: 10s
+      timeout: 4s
+      retries: 15
+    networks: [backend]
+
+  feedback-service:
+    build:
+      context: ./services/feedback-service
+    environment:
+      ENVIRONMENT: ${ENVIRONMENT:-development}
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+      FEEDBACK_DATABASE_URL: ${FEEDBACK_DATABASE_URL}
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_ALGORITHM: ${JWT_ALGORITHM:-HS256}
+      AI_SERVICE_URL: ${AI_SERVICE_URL:-http://ai-service:8003}
+      NOTIFICATION_SERVICE_URL: ${NOTIFICATION_SERVICE_URL:-http://notification-service:8004}
+      INTERNAL_SERVICE_TOKEN: ${INTERNAL_SERVICE_TOKEN}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      ai-service:
+        condition: service_healthy
+      notification-service:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8002/health', timeout=2)"]
+      interval: 10s
+      timeout: 4s
+      retries: 15
+    networks: [backend]
+
+  assistant-service:
+    build:
+      context: ./services/assistant-service
+    environment:
+      ENVIRONMENT: ${ENVIRONMENT:-development}
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+      ASSISTANT_DATABASE_URL: ${ASSISTANT_DATABASE_URL}
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_ALGORITHM: ${JWT_ALGORITHM:-HS256}
+      HF_TOKEN: ${HF_TOKEN:-}
+      ASSISTANT_MODEL_ID: ${ASSISTANT_MODEL_ID:-meta-llama/Llama-3.1-8B-Instruct}
+      ASSISTANT_PROVIDER: ${ASSISTANT_PROVIDER:-auto}
+      ASSISTANT_BACKEND: ${ASSISTANT_BACKEND:-huggingface}
+      ASSISTANT_REQUIRE_LLM: ${ASSISTANT_REQUIRE_LLM:-true}
+      ASSISTANT_API_TIMEOUT_SECONDS: ${ASSISTANT_API_TIMEOUT_SECONDS:-45}
+      ASSISTANT_MAX_RETRIES: ${ASSISTANT_MAX_RETRIES:-2}
+      ASSISTANT_MAX_NEW_TOKENS: ${ASSISTANT_MAX_NEW_TOKENS:-220}
+      ASSISTANT_TEMPERATURE: ${ASSISTANT_TEMPERATURE:-0.2}
+      ASSISTANT_TOP_P: ${ASSISTANT_TOP_P:-0.9}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8005/health', timeout=2)"]
+      interval: 15s
+      timeout: 5s
+      start_period: 20s
+      retries: 12
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+    networks: [backend]
+
+  frontend:
+    build:
+      context: ./frontend
+    networks: [frontend]
+
+  gateway:
+    build:
+      context: ./gateway
+    ports:
+      - "8080:8080"
+    depends_on:
+      auth-service:
+        condition: service_healthy
+      feedback-service:
+        condition: service_healthy
+      ai-service:
+        condition: service_healthy
+      notification-service:
+        condition: service_healthy
+      assistant-service:
+        condition: service_healthy
+      frontend:
+        condition: service_started
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://localhost:8080/gateway-health"]
+      interval: 10s
+      timeout: 4s
+      retries: 10
+    networks: [frontend, backend]
+
+networks:
+  frontend:
+  backend:
+
+volumes:
+  postgres_data:
