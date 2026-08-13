@@ -83,10 +83,11 @@ pipeline {
     stage('Local compose smoke test') {
       steps {
         sh 'ASSISTANT_BACKEND=template ASSISTANT_REQUIRE_LLM=false docker compose --env-file .env.example up -d'
-        sh 'python scripts/wait_for_stack.py --url http://host.docker.internal:8080 --timeout 360'
-        sh 'python tests/smoke/smoke.py --base-url http://host.docker.internal:8080'
+        sh 'docker network connect campuspulse-ai_frontend "$HOSTNAME"'
+        sh 'python scripts/wait_for_stack.py --url http://gateway:8080 --timeout 360'
+        sh 'python tests/smoke/smoke.py --base-url http://gateway:8080'
       }
-      post { always { sh 'docker compose --env-file .env.example down -v || true' } }
+      post { always { sh 'docker network disconnect campuspulse-ai_frontend "$HOSTNAME" || true'; sh 'docker compose --env-file .env.example down -v || true' } }
     }
     stage('Hosted Llama API smoke (opt-in)') {
       when { expression { return params.RUN_HOSTED_LLM_SMOKE } }
