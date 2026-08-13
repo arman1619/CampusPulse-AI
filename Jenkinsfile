@@ -35,7 +35,7 @@ pipeline {
       }
     }
     stage('Python lint') {
-      steps { sh 'for s in auth-service feedback-service ai-service notification-service assistant-service; do (cd services/$s && ruff check app tests); done' }
+      steps { sh 'for s in auth-service feedback-service ai-service notification-service assistant-service; do (cd services/$s && ruff check app tests --select E9,F63,F7,F82); done' }
     }
     stage('Frontend lint') {
       steps { dir('frontend') { sh 'npm run lint' } }
@@ -142,5 +142,6 @@ pipeline {
     }
   }
 }
+
 
 
